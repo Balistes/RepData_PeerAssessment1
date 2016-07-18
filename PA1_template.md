@@ -5,7 +5,7 @@ Balistes
 
 
 ## Loading and preprocessing the data
-1. Create directory for dataset, load and unzip file, install packages. 
+Create directory for dataset, load and unzip file, install packages. 
 
 
 ```r
@@ -31,7 +31,7 @@ if(!is.element("lattice", installed.packages()[,1])) {
 }
 ```
 
-2. Read file and create dataset.
+Read file and create dataset.
 
 ```r
 dataset <- read.table("./data/activity.csv", header = TRUE, sep = ",", na.strings = "NA")
@@ -40,7 +40,7 @@ dataset$date <- as.Date(dataset$date, "%Y-%m-%d")
 
 ## What is mean total number of steps taken per day?
 
-1. Calculate the total number of steps taken per day.
+Calculate the total number of steps taken per day.
 
 ```r
 DaySteps <- tapply(dataset$steps,dataset$date,function(x) sum(x, na.rm = TRUE)) 
@@ -72,7 +72,7 @@ DaySteps
 ##          0
 ```
 
-2. Histogram of the total number of steps taken each day.
+Histogram of the total number of steps taken each day.
 
 ```r
 hist(DaySteps,col="lightblue",xlab="Number of steps", main="Total number of steps taken each day")
@@ -80,7 +80,7 @@ hist(DaySteps,col="lightblue",xlab="Number of steps", main="Total number of step
 
 ![](PA1_template_files/figure-html/histogram_ds-1.png)<!-- -->
 
-3. Calculate the mean and median of the total number of steps taken per day.
+Calculate the mean and median of the total number of steps taken per day.
 
 ```r
 Stmean <- mean(DaySteps, na.rm=TRUE)
@@ -90,7 +90,7 @@ The mean is : **9354.23** and the median is : **10395**.
 
 ## What is the average daily activity pattern?
 
-1. A time series of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+A time series of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```r
 steps_per_intv <- with(dataset, tapply(steps, interval, mean, na.rm = TRUE))
@@ -101,7 +101,7 @@ plot(unique(dataset$interval), steps_per_intv, type = "l",
 
 ![](PA1_template_files/figure-html/line_plot-1.png)<!-- -->
 
-2. 5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps.
+5-minute interval, on average across all the days in the dataset, that contains the maximum number of steps.
 
 ```r
 maxvalue <- max( steps_per_intv )
@@ -113,7 +113,7 @@ The 5-minute interval, that contains the maximum number of steps is 835 with ave
 
 ## Imputing missing values
 
-1. Calculate the total number of missing values in the dataset (i.e. the total number of rows with 𝙽𝙰s)
+Calculate the total number of missing values in the dataset (i.e. the total number of rows with 𝙽𝙰s)
 
 ```r
 sum(is.na(dataset))
@@ -123,7 +123,7 @@ sum(is.na(dataset))
 ## [1] 2304
 ```
 
-2. Create new dataset for filling the all missing values. Next, create a new column in which fill in all values as mean of 5-minute interval. After that fill all the missing values with values from the new column.
+Create new dataset for filling the all missing values. Next, create a new column in which fill in all values as mean of 5-minute interval. After that fill all the missing values with values from the new column.
 
 ```r
 newdataset <- dataset
@@ -131,8 +131,7 @@ newdataset$msteps <- tapply(dataset$steps,dataset$interval,function(x) mean(x, n
 newdataset[is.na(newdataset$steps),]$steps <- newdataset[is.na(newdataset$steps),]$msteps
 ```
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-   Delete the new column and create a new dataset that is equal to the original dataset but with the missing data filled in.
+Create a new dataset that is equal to the original dataset but with the missing data filled in. Delete the new column and create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```r
 newdataset <- newdataset[-c(4)]
@@ -147,7 +146,7 @@ sum(is.na(newdataset))
 ## [1] 0
 ```
 
-4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 
 ```r
 NewDS <- tapply(newdataset$steps,newdataset$date,function(x) sum(x, na.rm = TRUE)) 
@@ -180,7 +179,7 @@ The impact of imputing missing data on the estimates of the total daily number o
   
 ## Are there differences in activity patterns between weekdays and weekends?
 
-1. Use the newdataset with the filled-in missing values. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day
+Use the newdataset with the filled-in missing values. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day
 
 ```r
 dayweek <- data.frame(
@@ -197,7 +196,7 @@ str(dayweek)
 ##  $ daytype: Factor w/ 2 levels "weekday","weekend": 1 1 1 1 1 2 2
 ```
 
-2. Add a new column for the new dataset with "weekends" and "weekdays" values.
+Add a new column for the new dataset with "weekends" and "weekdays" values.
 
 ```r
 daytype <- merge(dayweek,data.frame(
@@ -205,14 +204,14 @@ daytype <- merge(dayweek,data.frame(
 WeekDS <- cbind(newdataset,daytype)
 ```
 
-3. Calculate the average number of steps taken for each interval, separately for weekdays and weekends and create dataset for plot
+Calculate the average number of steps taken for each interval, separately for weekdays and weekends and create dataset for plot
 
 ```r
 WeekDS$msteps <- tapply(WeekDS$steps,WeekDS$interval,function(x) mean(x, na.rm = TRUE)) 
 WeekDS <- WeekDS[-c(1,2)]
 ```
 
-4. Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken. 
+Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken. 
 
 ```r
 library(lattice)
