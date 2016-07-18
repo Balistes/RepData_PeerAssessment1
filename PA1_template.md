@@ -207,16 +207,19 @@ WeekDS <- cbind(newdataset,daytype)
 Calculate the average number of steps taken for each interval, separately for weekdays and weekends and create dataset for plot
 
 ```r
-WeekDS$msteps <- tapply(WeekDS$steps,WeekDS$interval,function(x) mean(x, na.rm = TRUE)) 
-WeekDS <- WeekDS[-c(1,2)]
+PlotDS <- aggregate(WeekDS$steps,
+                       by=list(WeekDS$interval,WeekDS$daytype),
+                       function(x) mean(x,na.rm=TRUE))
+names(PlotDS) <- c("interval","datetype","msteps")
 ```
 
 Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken. 
 
 ```r
 library(lattice)
-xyplot(WeekDS$msteps ~ WeekDS$interval |
-         WeekDS$daytype , type = "l",
+
+xyplot(PlotDS$msteps ~ PlotDS$interval |
+         PlotDS$datetype , type = "l",
        ylab = "Averaged across all days, steps", xlab = "Time interval, 5-minute",
        main = "Daily activity time series", layout = c(1,2))
 ```
